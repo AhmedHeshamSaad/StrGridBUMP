@@ -4,19 +4,22 @@ program StrGrid
     real, parameter :: pi = real(22)/real(7)
     
     type node
+        integer :: n
+        real :: zeta
+        real :: eta
         real :: x
         real :: y
     end type node
-    type(node), dimension(:), allocatable :: AlgNodes
+    type(node), dimension(:,:), allocatable :: AlgNodes
 
     Imax = 30
     Jmax = 15
 
-    allocate(AlgNodes(1:Imax*Jmax))
+    allocate(AlgNodes(Imax,Jmax))
     AlgNodes = algebricGrid(Imax, Jmax)
 
-    print '("x Grid: "/(30f7.3))', (AlgNodes(i)%x, i=1,Imax*Jmax)
-    print '("y Grid: "/(30f7.3))', (AlgNodes(i)%y, i=1,Imax*Jmax)
+    print '("x Grid: "/(30f7.3))', ((AlgNodes(i,j)%x, i=1, Imax), j = 1, Jmax)
+    print '("y Grid: "/(30f7.3))', ((AlgNodes(i,j)%y, i=1, Imax), j = 1, Jmax)
 
     contains
 
@@ -84,14 +87,16 @@ program StrGrid
     function algebricGrid(Imax, Jmax) result(AlgNodes)
         implicit none
         integer, intent(in) :: Imax, Jmax
-        integer :: n
-        type(node), dimension(:), allocatable :: AlgNodes
-        n = Imax * Jmax
-        allocate(AlgNodes(1:n))
+        type(node), dimension(:,:), allocatable :: AlgNodes
+        
+        allocate(AlgNodes(Imax, Jmax))
         do i = 1, Imax
             do j = 1, Jmax
-                AlgNodes(i + (j-1) * Imax)%x = x_function(i,j)
-                AlgNodes(i + (j-1) * Imax)%y = y_function(i,j)
+                AlgNodes(i,j)%n = i + (j-1) * Imax
+                AlgNodes(i,j)%zeta = zeta(i)
+                AlgNodes(i,j)%eta = eta(j)
+                AlgNodes(i,j)%x = x_function(i,j)
+                AlgNodes(i,j)%y = y_function(i,j)
     
                 ! print 100, i + (j-1) * Imax, i, j, AlgNodes(i + (j-1) * Imax)%x, AlgNodes(i + (j-1) * Imax)%y
                 ! 100 format('Node number:', i3,' i= ', i2, ' j= ', i2, ' x= ', f7.4, ' y= ', f7.4)
