@@ -1,6 +1,6 @@
 #GFORTRAN OS X ###
 FC = gfortran
-FFLAGS = -m64 -fdefault-real-8
+FFLAGS = -m64 -fdefault-real-8 -fcheck=all -Wall
 TARGET_ARCH =
 LDFLAGS = -m64
 LIBS = 
@@ -13,10 +13,11 @@ VPATH = mod
 GRAFIC_HEADER =
 
 SRCMOD =    			\
-	AlgModule.f90		\
+	AlgebricMod.f90		\
 	Structures.f90		\
-	solveLaplace.f90	\
-	paraview.f90
+	LaplaceMod.f90		\
+	paraview.f90		\
+	constants.f90
 
 SRCMAIN =      			\
 	StrGrid.f90
@@ -38,5 +39,5 @@ $(OBJMAIN): $(OBJMOD)
 
 # clean any generated files
 clean:
-	-rm -f *.o *~ core
+	-rm -f *.o *~ core 
 

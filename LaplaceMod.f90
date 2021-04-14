@@ -15,7 +15,7 @@ contains
 
         retval =    ( (grid%nodes(i,j+1)%x - grid%nodes(i,j-1)%x)**2 +      &
                       (grid%nodes(i,j+1)%y - grid%nodes(i,j-1)%y)**2 ) /    &
-                    (  4 * (grid%d_eta())**2                         )
+                    (  4.0 * (grid%d_eta())**2                         )
     end function alpha
 
     function beta(i,j) result(retval)
@@ -27,7 +27,7 @@ contains
                         (grid%nodes(i,j+1)%x - grid%nodes(i,j-1)%x) +       &
                       (grid%nodes(i+1,j)%y - grid%nodes(i-1,j)%y) *         &
                         (grid%nodes(i,j+1)%y - grid%nodes(i,j-1)%y)    ) /  &
-                    (  4 * (grid%d_eta()) * (grid%d_zeta())            )
+                    (  4.0 * (grid%d_eta()) * (grid%d_zeta())            )
     end function beta
 
     function jamma(i,j) result(retval)
@@ -37,15 +37,15 @@ contains
 
         retval =    ( (grid%nodes(i+1,j)%x - grid%nodes(i-1,j)%x)**2 +      &
                       (grid%nodes(i+1,j)%y - grid%nodes(i-1,j)%y)**2 ) /    &
-                    (  real(4) * (grid%d_zeta())**2                         )
+                    (  4.0 * (grid%d_zeta())**2                         )
     end function jamma
 
     subroutine genLaplace(lg)
         implicit none
         type(grid_object) :: lg
-        real(8) :: e, dzeta, deta,  den, a1, a2, &
+        real(8) :: e1, e2, e, dzeta, deta,  den, a1, a2, &
             a3, a4, a5, a6, a7, a8
-        integer :: i , j, n, Imax, Jmax, k, MinIndex
+        integer :: i , j, n, Imax, Jmax, MinIndex
         real(8), dimension(:), allocatable :: temp
 
         grid = lg
@@ -56,20 +56,10 @@ contains
         allocate(temp(Imax))
 
         e = 1
-        do k = 1, 100
+        do while (.true.)
             do n = 1, Imax*Jmax
                 j = CEILING(real(n)/real(Imax))
                 i = n - Imax * (j -1)
-
-                den = 2 * (alpha(i,j)/dzeta**2 + jamma(i,j)/deta**2)
-                a1 = -1 * beta(i,j) / (2 * dzeta * deta * den)
-                a2 = jamma(i,j) / (deta**2 * den)
-                a3 = -1 * a1
-                a4 = alpha(i,j) / (dzeta**2 * den)
-                a5 = a4
-                a6 = -1 * a1
-                a7 = a2
-                a8 = a1
 
                 if (j == 1) then ! for lower boundary
                     if ((lg%nodes(i,j)%x < 2) .or. (lg%nodes(i,j)%x > 3)) then
@@ -80,7 +70,7 @@ contains
                         ! thus, the slop of x with change of eta equals to 
                         ! derivative of bump function 
                         lg%nodes(i,j)%x = lg%nodes(i,j+2)%x     &
-                            + 2 * deta * (0.2*pi*cos((lg%nodes(i,j)%x-2)*pi))
+                            + 2.0 * deta * (0.2*pi*cos((lg%nodes(i,j)%x-2)*pi))
                         ! here y coordinate must be updated because it might be changed while 
                         ! fixing the position of LE and TE
                         lg%nodes(i,j)%y = 0.2 * sin((lg%nodes(i,j)%x-2)*pi)
@@ -92,6 +82,15 @@ contains
                 else if (i == Imax) then    ! for right boundary
                     lg%nodes(i,j)%y = lg%nodes(i-2,j)%y
                 else if (i > 1 .and. i < Imax .and. j > 1 .and. j < Jmax) then
+                    den = 2.0 * (alpha(i,j)/dzeta**2 + jamma(i,j)/deta**2)
+                    a1 = -1.0 * beta(i,j) / (2.0 * dzeta * deta * den)
+                    a2 = jamma(i,j) / (deta**2 * den)
+                    a3 = -1.0 * a1
+                    a4 = alpha(i,j) / (dzeta**2 * den)
+                    a5 = a4
+                    a6 = -1.0 * a1
+                    a7 = a2
+                    a8 = a1
                     lg%nodes(i,j)%x =   a1 * lg%nodes(i-1,j-1)%x + &
                                         a2 * lg%nodes(i  ,j-1)%x + &
                                         a3 * lg%nodes(i+1,j-1)%x + &
@@ -113,20 +112,26 @@ contains
             end do
 
             ! fix position of LE
-            temp = abs(lg%nodes(:,1)%x - 2)
+            temp = abs(lg%nodes(:,1)%x - 2.0)
             MinIndex = MINLOC(temp, 1)      ! get index of closest node to the LE
-            lg%nodes(MinIndex,1)%x = 2.0d0
-            lg%nodes(MinIndex,1)%y = 0.0d0
+            lg%nodes(MinIndex,1)%x = 2.0
+            lg%nodes(MinIndex,1)%y = 0.0
 
             ! fix position of TE
-            temp = abs(lg%nodes(:,1)%x - 3)
+            temp = abs(lg%nodes(:,1)%x - 3.0)
             MinIndex = MINLOC(temp, 1)      ! get index of closest node to the TE
-            lg%nodes(MinIndex,1)%x = 3.0d0
-            lg%nodes(MinIndex,1)%y = 0.0d0
+            lg%nodes(MinIndex,1)%x = 3.0
+            lg%nodes(MinIndex,1)%y = 0.0
             
+            ! check convergence
+            e1 = MAXVAL(ABS(lg%nodes(:,:)%x - grid%nodes(:,:)%x))
+            e2 = MAXVAL(ABS(lg%nodes(:,:)%y - grid%nodes(:,:)%y))
+            e = MAX(e1,e2)
+            if (e < 0.0001) exit
+
+            ! update old grid for the next generation
             grid = lg
         
-            if (e < 0.00001) exit
         end do
 
         

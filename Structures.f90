@@ -22,15 +22,15 @@ contains
 
     function d_zeta(g) result(retval)
         class(grid_object), intent(in) :: g
-        real :: retval
+        real(8) :: retval
 
         retval = real(1) / (g%Imax-1)
     end function d_zeta
     
     function d_eta(g) result(retval)
         class(grid_object), intent(in) :: g
-        real :: retval
+        real(8) :: retval
 
-        retval = real(1)  / (g%Jmax-1)
+        retval = real(1,8)  / (g%Jmax-1)
     end function d_eta
 end module Structures

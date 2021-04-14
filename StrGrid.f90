@@ -14,7 +14,6 @@ program StrGrid
     AlgGrid%Imax = 90
     AlgGrid%Jmax = 15
     
-
     allocate(AlgGrid%nodes(AlgGrid%Imax,AlgGrid%Jmax))  ! locate memory for Algebric grid nodes
 
     ! Generate algebric grid
@@ -22,6 +21,7 @@ program StrGrid
 
     ! Generate Laplace grid
     LapGrid = AlgGrid  
+
     call genLaplace(LapGrid)
 
     ! ! Print x and y coordinates to the terminal window
@@ -29,6 +29,5 @@ program StrGrid
     ! print '("y LGrid: "/(90f7.3))', ((LapGrid%nodes(i,j)%y, i=1, LapGrid%Imax), j = 1, LapGrid%Jmax)
 
     ! export grid into csv file
-    ! call exportcsv(AlgGrid)
-    call exportcsv(LapGrid)
+    call exportcsv(AlgGrid)
 end program StrGrid
