@@ -11,4 +11,4 @@ To generate an orthogonal grid, one solves an elliptic PDE which taking the form
 
 A sample of algebraic grid and Laplacian grid with a dimension of 90x15 nodes is shown in the figure below.
 
-![alt text](https://github.com/AhmedHeshamSaad/StrGridBUMP.git/algebric and laplace grid 90x15.png?raw=true)
+![alt text](https://github.com/AhmedHeshamSaad/StrGridBUMP.git/algebric_and_laplace_grid_90x15.png?raw=true)
