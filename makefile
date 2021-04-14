@@ -13,8 +13,10 @@ VPATH = mod
 GRAFIC_HEADER =
 
 SRCMOD =    			\
-	AlgInit.f90			\
-	Structures.f90
+	AlgModule.f90		\
+	Structures.f90		\
+	solveLaplace.f90	\
+	paraview.f90
 
 SRCMAIN =      			\
 	StrGrid.f90
