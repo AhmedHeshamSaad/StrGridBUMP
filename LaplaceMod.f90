@@ -70,10 +70,10 @@ contains
                         ! thus, the slop of x with change of eta equals to 
                         ! derivative of bump function 
                         lg%nodes(i,j)%x = lg%nodes(i,j+2)%x     &
-                            + 2.0 * deta * (0.2*pi*cos((lg%nodes(i,j)%x-2)*pi))
+                            + 2.0 * deta * (0.1*pi*cos((lg%nodes(i,j)%x-2)*pi))
                         ! here y coordinate must be updated because it might be changed while 
                         ! fixing the position of LE and TE
-                        lg%nodes(i,j)%y = 0.2 * sin((lg%nodes(i,j)%x-2)*pi)
+                        lg%nodes(i,j)%y = 0.1 * sin((lg%nodes(i,j)%x-2)*pi)
                     end if
                 else if (j == Jmax) then    ! for upper boundary
                     lg%nodes(i,j)%x = lg%nodes(i,j-2)%x

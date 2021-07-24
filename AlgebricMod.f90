@@ -42,7 +42,7 @@ contains
         if ((temp_x >= 0 .and. temp_x <= 2) .or. (temp_x >= 3 .and. temp_x <= 5)) then
             retval = 0
         else if (temp_x > 2 .and. temp_x < 3) then
-            retval = 0.20d0 * sin((temp_x-2)*pi)
+            retval = 0.10d0 * sin((temp_x-2)*pi)
         end if
     end function yL
 
